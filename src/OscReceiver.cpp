@@ -15,10 +15,7 @@ int oscHandler (const char* path, const char* types, lo_arg** argv, int argc, lo
     // std::cout << "types: " << types << std::endl;
 
     auto * receiver = static_cast<OscReceiver*>(user_data);
-    auto timestamp = std::chrono::steady_clock::now() - receiver->startTime;
-
-    auto seconds = std::chrono::duration<double>(timestamp).count();
-    std::cout << "Timestamp: " << seconds <<" s" << std::endl;
+    auto timestamp = std::chrono::duration<double>(std::chrono::steady_clock::now() - receiver->startTime);
 
     std::vector<OscMessage::Argument> arguments;
     // std::cout << "before arguments" << std::endl;
@@ -40,7 +37,7 @@ int oscHandler (const char* path, const char* types, lo_arg** argv, int argc, lo
     }
     // std::cout << "after arguments" << std::endl;
 
-    OscMessage message(std::string(path), std::move(arguments));
+    OscMessage message(timestamp, std::string(path), std::move(arguments));
 
     // std::cout << "message created" << std::endl;
 

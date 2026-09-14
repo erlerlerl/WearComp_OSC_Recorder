@@ -1,7 +1,11 @@
 #include "OscMessage.hpp"
 
-OscMessage::OscMessage(std::string address, std::vector<Argument> arguments)
-    : address_(std::move(address)), arguments_(std::move(arguments)) {}
+OscMessage::OscMessage(Timestamp timestamp, std::string address, std::vector<Argument> arguments)
+    : timestamp_(timestamp), address_(std::move(address)), arguments_(std::move(arguments)) {}
+
+OscMessage::Timestamp OscMessage::timestamp() const {
+    return timestamp_;
+}
 
 const std::string &OscMessage::address() const {
     return address_;

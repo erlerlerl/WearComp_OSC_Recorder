@@ -12,6 +12,8 @@ auto main(int argc, char *argv[]) -> int {
 
         std::cout << "OSC received: " << message.address();
 
+        std::cout << " at " << message.timestamp().count();
+
         for (const auto &argument : message.arguments()) {
             std::visit([](const auto& value) {std::cout << " " << value;}, argument);
         }
