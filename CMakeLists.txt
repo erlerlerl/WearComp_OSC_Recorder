@@ -25,4 +25,4 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # --- Libraries ---
 
 target_link_directories(${PROJECT_NAME} PRIVATE ${LIBLO_LIBRARY_DIRS})
-target_link_directories(${PROJECT_NAME} PRIVATE ${LIBLO_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBLO_LIBRARIES})
