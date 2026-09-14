@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <lo/lo.h>
+#include <chrono>
 
 namespace {
 
@@ -14,6 +15,10 @@ int oscHandler (const char* path, const char* types, lo_arg** argv, int argc, lo
     // std::cout << "types: " << types << std::endl;
 
     auto * receiver = static_cast<OscReceiver*>(user_data);
+    auto timestamp = std::chrono::steady_clock::now() - receiver->startTime;
+
+    auto seconds = std::chrono::duration<double>(timestamp).count();
+    std::cout << "Timestamp: " << seconds <<" s" << std::endl;
 
     std::vector<OscMessage::Argument> arguments;
     // std::cout << "before arguments" << std::endl;
@@ -62,6 +67,7 @@ OscReceiver::~OscReceiver() {
 }
 
 bool OscReceiver::start() {
+    startTime = std::chrono::steady_clock::now();
     server = lo_server_new(
         std::to_string(port).c_str(), nullptr
     );
