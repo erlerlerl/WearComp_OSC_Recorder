@@ -1,4 +1,5 @@
 #include "OscReceiver.hpp"
+#include "OscMessage.hpp"
 
 #include <iostream>
 #include <lo/lo.h>
@@ -8,22 +9,32 @@ namespace {
 int oscHandler (const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data
 ){
 
-    std::cout << "OSC received " << path;
-
+    std::vector<OscMessage::Argument> arguments;
 
     for (int i = 0; i < argc; i++) {
         switch (types[i]) {
             case 'f':
-                std::cout << " " << argv[i]->f;
+                arguments.emplace_back(argv[i]->f);
                 break;
             case 'i':
-                std::cout << " " << argv[i]->i;
+                arguments.emplace_back(argv[i]->i);
                 break;
             case 's':
-                std::cout << " " << &argv[i]->s;
+                arguments.emplace_back(&argv[i]->s);
                 break;
+            default:
+                std::cerr << "Unsupported OSC argument type " << types[i] << std::endl;
         }
     }
+
+    OscMessage message(std::string(path), std::move(arguments));
+
+    std::cout << "OSC received: " << message.address();
+
+    for (const auto &argument : message.arguments()) {
+        std::visit([](const auto& value) {std::cout << " " << value;}, argument);
+    }
+
     std::cout << std::endl;
     return 0;
 
@@ -36,7 +47,7 @@ OscReceiver::OscReceiver(int port) : port(port), server(nullptr) {
 
 OscReceiver::~OscReceiver() {
     if (server) {
-        lo_server_free(static_cast<lo_server>(server));
+        lo_server_free(server);
   }
 }
 
@@ -50,7 +61,7 @@ bool OscReceiver::start() {
         return false;
     }
 
-    lo_server_add_method(static_cast<lo_server>(server),     // server
+    lo_server_add_method(server,     // server
                          nullptr,    // alle OSC Paths
                          nullptr,    // ally type tags
                          oscHandler, // Methode
@@ -64,6 +75,6 @@ bool OscReceiver::start() {
 
 void OscReceiver::run() {
     while (true) {
-        lo_server_recv(static_cast<lo_server>(server));
+        lo_server_recv(server);
   }
 }

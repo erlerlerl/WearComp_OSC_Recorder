@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <lo/lo.h>
 
 
 
@@ -14,5 +15,5 @@ class OscReceiver {
 
     private:
         int port;
-        void* server;
+        lo_server server;
 };
