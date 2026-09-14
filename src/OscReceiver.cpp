@@ -8,8 +8,15 @@ namespace {
 
 int oscHandler (const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data
 ){
+    // std::cout << "handler called" << std::endl;
+    // std::cout << "path: " << path << std::endl;
+    // std::cout << "argc: " << argc << std::endl;
+    // std::cout << "types: " << types << std::endl;
+
+    auto * receiver = static_cast<OscReceiver*>(user_data);
 
     std::vector<OscMessage::Argument> arguments;
+    // std::cout << "before arguments" << std::endl;
 
     for (int i = 0; i < argc; i++) {
         switch (types[i]) {
@@ -26,22 +33,25 @@ int oscHandler (const char* path, const char* types, lo_arg** argv, int argc, lo
                 std::cerr << "Unsupported OSC argument type " << types[i] << std::endl;
         }
     }
+    // std::cout << "after arguments" << std::endl;
 
     OscMessage message(std::string(path), std::move(arguments));
 
-    std::cout << "OSC received: " << message.address();
+    // std::cout << "message created" << std::endl;
 
-    for (const auto &argument : message.arguments()) {
-        std::visit([](const auto& value) {std::cout << " " << value;}, argument);
+    if (receiver->messageHandler) {
+        // std::cout << "calling callback" << std::endl;
+        receiver->messageHandler(message);
     }
 
-    std::cout << std::endl;
+    // std::cout << "callback finished" << std::endl;
+
     return 0;
 
 }
 }
 
-OscReceiver::OscReceiver(int port) : port(port), server(nullptr) {
+OscReceiver::OscReceiver(int port) : port(port), server(nullptr), messageHandler(nullptr) {
 
 }
 
@@ -65,7 +75,7 @@ bool OscReceiver::start() {
                          nullptr,    // alle OSC Paths
                          nullptr,    // ally type tags
                          oscHandler, // Methode
-                         nullptr
+                         this
     );
 
     std::cout << "OSC server listening on port " << port << std::endl;
@@ -77,4 +87,8 @@ void OscReceiver::run() {
     while (true) {
         lo_server_recv(server);
   }
+}
+
+void OscReceiver::setMessageHandler(MessageHandler handler) {
+    messageHandler = std::move(handler);
 }
