@@ -5,7 +5,7 @@
 
 auto main(int argc, char *argv[]) -> int {
 
-    OscReceiver receiver(9000);
+    OscReceiver receiver(30181);
 
 
     receiver.setMessageHandler([](const OscMessage &message) {
