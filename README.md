@@ -29,7 +29,7 @@ Sending every 10 analogFrames was a decision to achieve a sufficient temporal re
 
 #### OSC address taxonomy
 
-The piezo-electric value is sent via the address `/bela/piezo/peak`. `/bela` marking the Bela Gem Multi as the origin of the sensor value. `/piezo` marking the type of sensor used and `/peak` marking the type of value retrieved from the sensor. In this case it resembles detected signal peaks. In future development something like a `/bela/piezo/raw` address could be used to send the raw piezo data in audio rate through the network (via [AOO](https://github.com/essej/aoo)).
+The piezo-electric value is sent via the address `/bela/piezo/peak`. `/bela` marking the Bela Gem Multi as the origin of the sensor value. `/piezo` marking the type of sensor used and `/peak` marking the type of value retrieved from the sensor. In this case it resembles detected signal peaks. In future development something like a `/bela/piezo/raw` address could be used to send the raw piezo data in audio rate through the network (via [AOO](https://git.iem.at/aoo/aoo)).
 
 The resistive pressure sensor is specified by the `/analog` sensor type and `/resistive` as value type resulting in an OSC address of `/bela/analog/resistive`. 
 
