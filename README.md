@@ -35,7 +35,7 @@ The resistive pressure sensor is specified by the `/analog` sensor type and `/re
 
 ### Signal Characterstics
 
-The piezo electric OSC Message delivers 2 values. As the Code on the Bela Gem Multi support Multichannel Peakdetection the first value represents the channel on which the peak was detected as an `int`. The second value represents the calculated velocity as a `float` value, ranging from 0.0 to 1.0. As described [above](#Sensor-Data-and-OSC-address-taxonomy) the messaging only occurs on a detected peak, so __the signal is event-based and not continous___.
+The piezo electric OSC Message delivers 2 values. As the Code on the Bela Gem Multi support Multichannel Peakdetection the first value represents the channel on which the peak was detected as an `int`. The second value represents the calculated velocity as a `float` value, ranging from 0.0 to 1.0. As described [above](#Sensor-Data-and-OSC-address-taxonomy) the messaging only occurs on a detected peak, so __the signal is event-based and not continous__.
 
 The resistive pressure sensor delivers only the raw values received from reading the analog Input. The value is also sent as a `float` ranging from 0.0 to 1.0. __This signal is meant to be treated as a continuous signal__.
 
