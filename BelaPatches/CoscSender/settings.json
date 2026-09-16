@@ -1,0 +1,186 @@
+{
+    "version": 2,
+    "parameters": {
+        "blockSize": 16,
+        "bitDepth": 16,
+        "sampleRate": 44100,
+        "analogChannels": 8,
+        "uniformSampleRate": true,
+        "useAnalog": true,
+        "useDigital": true,
+        "muteSpeaker": false,
+        "disableLED": false,
+        "headphoneGains": [
+            -6,
+            -6,
+            -6,
+            -6,
+            -6,
+            -6,
+            -6,
+            -6
+        ],
+        "userArguments": "",
+        "makeParameters": "",
+        "multiplexer": 0,
+        "audioExpander": false,
+        "y": [],
+        "z": [],
+        "adcLatency": 8,
+        "dacLatency": 9,
+        "equalLatency": false,
+        "audioInputChannelSettings": [
+            {
+                "impedance": "10k",
+                "couplingAndInput": "AC single-ended",
+                "gain": -6
+            },
+            {
+                "impedance": "10k",
+                "couplingAndInput": "AC single-ended",
+                "gain": -6
+            },
+            {
+                "impedance": "10k",
+                "couplingAndInput": "AC single-ended",
+                "gain": 10
+            },
+            {
+                "impedance": "10k",
+                "couplingAndInput": "AC single-ended",
+                "gain": 10
+            },
+            {
+                "impedance": "10k",
+                "couplingAndInput": "AC single-ended",
+                "gain": 10
+            },
+            {
+                "impedance": "10k",
+                "couplingAndInput": "AC single-ended",
+                "gain": 10
+            },
+            {
+                "impedance": "10k",
+                "couplingAndInput": "AC single-ended",
+                "gain": 10
+            },
+            {
+                "impedance": "10k",
+                "couplingAndInput": "AC single-ended",
+                "gain": 10
+            },
+            {
+                "impedance": "10k",
+                "couplingAndInput": "AC single-ended",
+                "gain": 10
+            },
+            {
+                "impedance": "10k",
+                "couplingAndInput": "AC single-ended",
+                "gain": 10
+            }
+        ],
+        "audioOutputChannelSettings": [
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            },
+            {
+                "meterStyle": "AC",
+                "gain": -6
+            }
+        ],
+        "globalInputGainControl": {
+            "enabled": false,
+            "gain": 0
+        },
+        "globalOutputGainControl": {
+            "enabled": false,
+            "gain": 0
+        },
+        "inputMicBias": "2.75V",
+        "recordOptions": {
+            "signalsToRecord": {
+                "audioOut": true,
+                "audioIn": true,
+                "sensors": true,
+                "digitalIO": true
+            },
+            "recordEveryTimeProgramStarts": false
+        },
+        "playOptions": {
+            "audioIn": {
+                "override": false,
+                "file": "",
+                "loop": false
+            },
+            "analogIn": {
+                "override": false,
+                "file": "",
+                "loop": false
+            },
+            "digitalIO": {
+                "override": false,
+                "file": "",
+                "loop": false
+            }
+        }
+    }
+}
