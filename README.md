@@ -45,4 +45,3 @@ Especially for the continuous messaging of the resistive pressure sensor values 
 
 There are some other timing imprecisions (Bela analog framerate, windowing while peak detection) which will be left aside here and probably won't matter for the specific usecase.
 
-
