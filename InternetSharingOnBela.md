@@ -514,7 +514,7 @@ Linux mini01 4.14.108-ti-xenomai-r143 ... armv7l GNU/Linux
 
 ## 2. Configure APT to use the Debian archive
 
-Back up the existing APT sources:
+Back up the existing APT sources, if it cannot resolve host, dont use sudo you should not need it anyway:
 
 ```bash
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
@@ -550,7 +550,7 @@ sudo apt-get update
 Install the compiler and DKMS:
 
 ```bash
-sudo apt-get install build-essential dkms
+sudo apt-get install build-essential dkms git
 ```
 
 Check that the **Bela-specific kernel headers** exist:
@@ -630,18 +630,6 @@ Expected:
 
 ---
 
-## 6. Fix the terminal type for Kitty
-
-When connecting via Kitty SSH, the installer may not understand `xterm-kitty`.
-
-Before running the installer:
-
-```bash
-export TERM=xterm-256color
-```
-
----
-
 ## 7. Install the driver
 
 Run the repository's installer:
@@ -665,8 +653,9 @@ Since DKMS is installed, it should use the DKMS installation method.
 
 From a **second SSH session**, you can monitor the number of compiled object files:
 
+<!-- watch -n 10 "find /var/lib/dkms/8821cu -name '*.o' | wc -l" -->
 ```bash
-watch -n 10 "find /var/lib/dkms/8821cu -name '*.o' | wc -l"
+watch -n 10 "find /var/lib/dkms -path '*8821cu*' -name '*.o' | wc -l" 
 ```
 
 Stop `watch` with:
