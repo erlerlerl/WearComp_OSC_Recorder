@@ -1,5 +1,7 @@
 # Sharing a Mac's Internet Connection with a Bela via Ethernet/USB
 
+**STILL NEEDS TO BE TESTED!**
+
 This guide describes how to give a Bela internet access through a Mac without using macOS Internet Sharing.
 
 The setup is:
