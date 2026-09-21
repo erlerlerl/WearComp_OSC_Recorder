@@ -2,6 +2,8 @@
 
 **STILL NEEDS TO BE TESTED!**
 
+
+
 This guide describes how to give a Bela internet access through a Mac without using macOS Internet Sharing.
 
 The setup is:
@@ -34,13 +36,19 @@ The Bela uses `192.168.7.1` as its gateway.
 
 ## 1. Configure the Mac's Bela interface
 
-Identify the Mac interface connected to the Bela:
+Find out on which hardware port the bela is with
+
+```bash
+networksetup -listallhardwareports
+```
+
+Identify the Mac interface connected to the Bela, here with example hardware port en15:
 
 ```bash
 ifconfig en15
 ```
 
-Configure it with:
+You may need to configure it with the following. If not proceed to Step 2:
 
 ```bash
 sudo ifconfig en15 192.168.7.1 netmask 255.255.255.0 up
@@ -110,6 +118,8 @@ ping -c 3 192.168.7.1
 This must work before troubleshooting internet access.
 
 ---
+
+If this does not work:
 
 ## 4. Enable IP forwarding on macOS
 
@@ -474,3 +484,310 @@ The Bela's `192.168.7.2` address and gateway can be made persistent through `/et
 For a permanent Mac setup, it is better to create a small launch mechanism for the forwarding/PF configuration rather than relying on manually running the commands after every reboot.
 Document Title
 
+# RTL8821CU Driver Installation on Bela
+
+This guide installs the **RTL8821CU USB Wi-Fi driver** on an older Bela system running:
+
+```text
+Kernel: 4.14.108-ti-xenomai-r143
+Architecture: armv7l
+USB adapter: 0bda:c820
+```
+
+The `0bda:c820` device is an RTL8821CU and is supported by the `8821cu-20210916` driver source.
+
+---
+
+## 1. Check the kernel
+
+```bash
+uname -a
+```
+
+Expected:
+
+```text
+Linux mini01 4.14.108-ti-xenomai-r143 ... armv7l GNU/Linux
+```
+
+---
+
+## 2. Configure APT to use the Debian archive
+
+Back up the existing APT sources:
+
+```bash
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+```
+
+Replace the normal Debian mirrors with the archive:
+
+```bash
+sudo sed -i \
+'s|http://deb.debian.org/debian|http://archive.debian.org/debian|g;
+ s|https://deb.debian.org/debian|http://archive.debian.org/debian|g;
+ s|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g;
+ s|https://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' \
+/etc/apt/sources.list
+```
+
+Disable the repository validity-date check:
+
+```bash
+echo 'Acquire::Check-Valid-Until "false";' | sudo tee /etc/apt/apt.conf.d/99no-check-valid-until
+```
+
+Update the package lists:
+
+```bash
+sudo apt-get update
+```
+
+---
+
+## 3. Install the build tools
+
+Install the compiler and DKMS:
+
+```bash
+sudo apt-get install build-essential dkms
+```
+
+Check that the **Bela-specific kernel headers** exist:
+
+```bash
+ls -ld /lib/modules/$(uname -r)/build
+```
+
+Expected:
+
+```text
+/usr/src/linux-headers-4.14.108-ti-xenomai-r143
+```
+
+> **Important:** Do not replace these with generic Debian kernel headers. The driver must be built against the exact Bela kernel:
+>
+> `4.14.108-ti-xenomai-r143`
+
+---
+
+## 4. Check for the old RTL8821AU driver
+
+Check DKMS:
+
+```bash
+dkms status
+```
+
+If the old AU driver is installed:
+
+```text
+rtl8821au, 5.12.5.2, 4.14.108-ti-xenomai-r143, armv7l: installed
+```
+
+remove it:
+
+```bash
+sudo dkms remove rtl8821au/5.12.5.2 --all
+```
+
+Then:
+
+```bash
+sudo depmod -a
+```
+
+The old `8821au` driver is not the correct driver for `0bda:c820`.
+
+---
+
+## 5. Get the RTL8821CU driver
+
+If the driver source is not already present:
+
+```bash
+cd /usr/src
+sudo git clone https://github.com/morrownr/8821cu-20210916.git
+```
+
+Enter the source directory:
+
+```bash
+cd /usr/src/8821cu-20210916
+```
+
+Verify that the USB adapter is supported:
+
+```bash
+grep -n '0BDA:C820' supported-device-IDs
+```
+
+Expected:
+
+```text
+20:ID 0BDA:C820
+```
+
+---
+
+## 6. Fix the terminal type for Kitty
+
+When connecting via Kitty SSH, the installer may not understand `xterm-kitty`.
+
+Before running the installer:
+
+```bash
+export TERM=xterm-256color
+```
+
+---
+
+## 7. Install the driver
+
+Run the repository's installer:
+
+```bash
+cd /usr/src/8821cu-20210916
+sudo ./install-driver.sh
+```
+
+The installer should detect the running kernel automatically:
+
+```text
+4.14.108-ti-xenomai-r143
+```
+
+Since DKMS is installed, it should use the DKMS installation method.
+
+---
+
+## 8. Monitor compilation progress
+
+From a **second SSH session**, you can monitor the number of compiled object files:
+
+```bash
+watch -n 10 "find /var/lib/dkms/8821cu -name '*.o' | wc -l"
+```
+
+Stop `watch` with:
+
+```text
+Ctrl+C
+```
+
+---
+
+## 9. Verify the DKMS installation
+
+After the installer finishes:
+
+```bash
+dkms status
+```
+
+You should see something similar to:
+
+```text
+8821cu, <version>, 4.14.108-ti-xenomai-r143, armv7l: installed
+```
+
+Then update the module dependencies:
+
+```bash
+sudo depmod -a
+```
+
+Load the driver:
+
+```bash
+sudo modprobe 8821cu
+```
+
+---
+
+## 10. Check for the Wi-Fi interface
+
+```bash
+ip link
+```
+
+Look for an interface such as:
+
+```text
+wlan0
+```
+
+Also check:
+
+```bash
+iw dev
+```
+
+---
+
+## 11. Check the kernel messages
+
+If the interface does not appear:
+
+```bash
+dmesg | tail -50
+```
+
+Also verify the USB device:
+
+```bash
+lsusb
+```
+
+The adapter should appear as:
+
+```text
+0bda:c820 Realtek Semiconductor Corp.
+```
+
+---
+
+## Important notes
+
+### Do not use the RTL8821AU driver
+
+The previous driver:
+
+```text
+rtl8821au
+```
+
+was the wrong driver family.
+
+The USB device:
+
+```text
+0bda:c820
+```
+
+is supported by the **RTL8821CU** driver.
+
+### Do not replace the Bela kernel headers
+
+The driver needs to be compiled against:
+
+```text
+4.14.108-ti-xenomai-r143
+```
+
+and specifically:
+
+```text
+/lib/modules/4.14.108-ti-xenomai-r143/build
+```
+
+### APT archive vs. kernel
+
+The Debian archive is only being used to obtain packages such as:
+
+```text
+build-essential
+dkms
+```
+
+It does **not** provide the Bela kernel. The Bela-specific kernel and headers must remain intact.
